@@ -46,7 +46,6 @@
             })
             .catch(error => {
                 console.error('Error on ip:', error);
-                // Envoyer les infos même sans IP
                 sendToDiscord("unknown", userAgent, language, platform, screenResolution, referer, timestamp);
             });
         
